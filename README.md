@@ -58,7 +58,7 @@ You create a multi-column region by defining the start, settings, column-end, an
 Text displayed above.
 
 --- start-multi-column: ExampleRegion1\
-\```column-settings\
+\```settings\
 number of columns: 2\
 largest column: left\
 \```
@@ -87,15 +87,7 @@ Text displayed below.
 #### **Start a Multi-Column Region:**
 Each multi-column region must start with either:
 
-> --- start-multi-column: A_unique_region_ID\
-
-or
-
-> --- multi-column-start: A_unique_region_ID_1\
-
-or
-
-> ::::: {.columns id=A_unique_region_ID_2}\
+> --- start-multi-column: A_unique_region_ID
 > _(See more about Pandoc's fenced divs syntax below.)_
 
 After defining the start tag you must declare an ID for the region. The ID is used to differentiate between different regions if there are multiple in the same document.
@@ -109,64 +101,23 @@ You can also use the "Fix Missing IDs" command which will search the currently o
 <br>
 
 #### **Region Settings:**
-> \```column-settings\
+> \```settings\
 > *Any Setting flags (see below)*\
 > \```
-
-> \```column-settings\
-> *Any Setting flags (see below)*\
-> \```
-
-> ::::: {.columns id=A_unique_region_ID_2 *Any Additional Setting flags (see below)*}
 
 <br>
 
 #### **End a Column:**
-\--- column-end \---\
 \--- end-column \---\
-\--- column-break \---\
 \--- break-column \---\
 
-
-> ::: columnbreak\
-> :::\
-> _(New line after columnbreak required.)_
 
 <br>
 
 #### **End Multi-Column Region:**
 \--- end-multi-column\
-\--- multi-column-end\
-
-> :::\
-> _(This end region syntax is only valid when using the Pandoc fenced divs syntax to start a region.)_
 
 <br>
-
-### **Pandoc Fenced Divs Support**
-You can also use Pandoc's fenced divs syntax to define column regions. (For more detail on this syntax see [here](https://pandoc.org/MANUAL.html#divs-and-spans) and [here](https://github.com/dialoa/columns/blob/master/README.md).)
-
-To create a multicolumn region use: 
-
-> ::: columns
-> 
-> \<Column Content>
-> 
-> :::
-
-
-To define multiple Pandoc regions on the same document, and to define region settings you must use the attributes syntax:
-
-
-> ::::: {.columns property=value id=ID_ExampleID}
->
-> \<Column Content>
->
-> :::::
-
-Not providing an ID will cause regions to not render.
-
-All other settings can be defined within the attributes using the same setting flag names defined below.
 
 ##### **What is supported with this syntax:**
 - Basic fenced divs column definition: '::: columns' or '::: {.columns}'
@@ -192,7 +143,7 @@ All other settings can be defined within the attributes using the same setting f
     - Any digit.
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Number of Columns: 2\
 > \```
 
@@ -227,7 +178,7 @@ _Can define on a per column basis with array syntax: EG: [25%, 75%]_
     - Allows *most* CSS unit lengths (px, pt, %, etc).
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Column Size: standard \
 > ( **OR** )\
 > Column Size: [25%, 75%]\
@@ -248,7 +199,7 @@ _Can define on a per column basis with array syntax: EG: [off, on, off]_
     - false
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Border: disabled \
 > ( **OR** )\
 > Border: [off, on]\
@@ -268,7 +219,7 @@ On by default, can be removed with:
     - false
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Shadow: off \
 > \```
 
@@ -289,7 +240,7 @@ Only used with the single column option.
     - Middle
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Number of Columns: 1\
 > Column Position: Left \
 > \```
@@ -307,7 +258,7 @@ _Can define on a per column basis with array syntax: EG: [5px, 10px]_
     - A number alone without a defined unit type defaults to pt unit.
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Column Spacing: 5px \
 > ( **OR** )\
 > Column Spacing: [5px, 10px]\
@@ -327,7 +278,7 @@ _Can define on a per column basis with array syntax: EG: [Scroll, Hidden]_
     - Hidden
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Overflow: Hidden \
 > ( **OR** )\
 > Overflow: [Scroll, Hidden]\
@@ -350,7 +301,7 @@ _Can define on a per column basis with array syntax: EG: [Left, Center]_
     - Right
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Alignment: Center \
 > ( **OR** )\
 > Alignment: [Left, Center]\
@@ -373,7 +324,7 @@ _This setting overrides the plugin level alignment definition._
     - false
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Align Tables to Text Alignment: true \
 > ( **OR** )\
 > Align Tables to Text Alignment: off\
@@ -392,7 +343,7 @@ _Example:_
     - on
 
 _Example:_
-> \```column-settings\
+> \```settings\
 > Auto Layout: on \
 > \```
 
@@ -562,13 +513,12 @@ This syntax has been entierly depricated due to many compounding issues caused b
 
 #### **Settings Regions**: 
 \```settings\```\
-\```column-settings\```\
+\```settings\```\
 \```multi-column-settings\```
 
 #### **End a Column:**
 - \=== column-end ===
 - \=== end-column ===
-- \=== column-break ===
 - \=== break-column ===
 
 #### **End Multi-Column Region:**

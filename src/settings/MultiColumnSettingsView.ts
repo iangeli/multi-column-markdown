@@ -2,7 +2,6 @@ import { App, ButtonComponent, Modal, Notice, Platform, PluginSettingTab, Settin
 import MultiColumnMarkdown from "src/main";
 import * as multiColumnParser from '../utilities/textParser';
 import { getUID } from "src/utilities/utils";
-import { updateAllSyntax } from "src/utilities/syntaxUpdate";
 import { MCM_SettingsManager } from "src/pluginSettings";
 
 export default class MultiColumnSettingsView extends PluginSettingTab {
@@ -67,7 +66,6 @@ export default class MultiColumnSettingsView extends PluginSettingTab {
         this.containerEl.createEl("hr", { attr: {"style": "margin-top: 1px; margin-bottom: 0.75em;"} })
         const dangerZoneContainerEl = this.containerEl.createDiv();
 
-        this.buildUpdateDepricated(dangerZoneContainerEl);
         this.buildFixMissingIDs(dangerZoneContainerEl);
 
         this.containerEl.createEl("br")
@@ -129,51 +127,6 @@ export default class MultiColumnSettingsView extends PluginSettingTab {
             div.createEl("ul").createEl("li", { text: "This value is overwritten when defining the column setting: 'Align Tables to Text Alignment: true/false'" })
         })
         return docFrag;
-    }
-
-    private buildUpdateDepricated(dangerZoneContainerEl: HTMLDivElement) {
-
-        let docFrag = new DocumentFragment();
-        docFrag.createDiv({}, div => {
-            div.createSpan({}, span => {
-                span.innerText = "This may take a while for large vaults, you can continue to use Obsidian but application may slow down during process.";
-            });
-            div.createEl("br");
-            div.createEl("br");
-            div.createEl("h5", {}, span => {
-                span.setAttr("style", "color: var(--text-error); margin-bottom: 0px; margin-top: 3px;");
-                span.innerText = "WARNING:";
-            });
-            div.createSpan({}, span => {
-                span.setAttr("style", "color: var(--text-error);");
-                span.innerText = "This action modifies any note file with depricated syntax and could lead to corrupted file text.";
-            });
-            div.createEl("br");
-            div.createSpan({}, span => {
-                span.setAttr("style", "color: var(--text-error);");
-                span.innerText = "No guarentee is given. Please make sure to back your vault up first.";
-            });
-        });
-        let modalDescriptionEl = createDiv({}, div => {
-            div.createSpan({ text: "This action may corrupt vault data." });
-            div.createEl("br");
-            div.createSpan({ text: "Please confirm you have backed up your vault." });
-        });
-        new Setting(dangerZoneContainerEl)
-            .setName("Update ALL depricated Multi-Column syntax.")
-            .setDesc(docFrag)
-            .addButton((b) => b.setButtonText("Update Syntax").onClick(() => {
-                const modal = ConfirmModal.confirmModalWithElement(this.app, modalDescriptionEl, { primary: "Confirm", secondary: "Cancel" });
-                modal.onClose = () => {
-                    if (modal.confirmed === false) {
-                        return;
-                    }
-
-                    updateFileSyntax();
-                };
-                modal.open();
-            })
-            );
     }
 
     private buildFixMissingIDs(dangerZoneContainerEl: HTMLDivElement) {
@@ -338,34 +291,6 @@ async function findAndReplaceMissingIDs() {
         }
     }
     new Notice(`Finished updating:\n${count} region IDs, across ${fileCount} files.`)
-}
-
-async function updateFileSyntax() {
-    
-    let fileCount = 0
-    let regionStartCount = 0;
-    let columnBreakCount = 0;
-    let columnEndCount = 0;
-    for(let mdFile of app.vault.getMarkdownFiles()) {
-        let originalFileContent = await app.vault.read(mdFile);
-        let result = updateAllSyntax(originalFileContent);
-
-        fileCount += result.fileCount;
-        regionStartCount += result.regionStartCount;
-        columnBreakCount += result.columnBreakCount;
-        columnEndCount += result.columnEndCount;
-        let updatedFileContent = result.updatedFileContent;
-
-        // TODO: Add in final file modification when done testing.
-        if(result.fileWasUpdated) {
-            app.vault.modify(mdFile, updatedFileContent)
-        }
-        else {
-            // console.debug("No changes, not updating file.")
-        }
-    }
-
-    new Notice(`Finished updating:\n${regionStartCount} start syntaxes,\n${columnBreakCount} column breaks, and\n${columnEndCount} column end tags,\nacross ${fileCount} files.`)
 }
 
 function getDonateButtonColors(containerEl: HTMLElement) {

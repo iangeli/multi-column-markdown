@@ -10,15 +10,13 @@ import { parseStartRegionCodeBlockID } from "./settingsParser";
 import { containsPandoc, findPandocStart, reducePandocRegionToEndDiv, getPandocStartData } from "./pandocParser";
 import { RegionType, StartTagRegexMatch, defaultStartRegionData } from "./interfaces";
 
-const START_REGEX_STRS = ["(===|---) *start-multi-column(:?[a-zA-Z0-9-_\\s]*)?",
-                          "(===|---) *multi-column-start(:?[a-zA-Z0-9-_\\s]*)?"]
+const START_REGEX_STRS = ["--- ?start-multi-column(: ?\w{3,})?"]
 const START_REGEX_ARR: RegExp[] = [];
 for(let i = 0; i < START_REGEX_STRS.length; i++) {
     START_REGEX_ARR.push(new RegExp(START_REGEX_STRS[i]));
 }
 
-const START_REGEX_STRS_WHOLE_LINE = ["^(===|---) *start-multi-column(:?[a-zA-Z0-9-_\\s]*)?$",
-                                     "^(===|---) *multi-column-start(:?[a-zA-Z0-9-_\\s]*)?$"]
+const START_REGEX_STRS_WHOLE_LINE = ["^--- ?start-multi-column(: ?\w{3,})?$"]
 const START_REGEX_ARR_WHOLE_LINE: RegExp[] = [];
 for(let i = 0; i < START_REGEX_STRS_WHOLE_LINE.length; i++) {
     START_REGEX_ARR_WHOLE_LINE.push(new RegExp(START_REGEX_STRS_WHOLE_LINE[i]));
@@ -66,10 +64,7 @@ export function isStartTagWithID(text: string): {isStartTag: boolean, hasKey: bo
     return {isStartTag: false, hasKey: false};
 }
 
-const END_REGEX_STRS = ["--- *end-multi-column",
-                        "--- *multi-column-end",
-                        "=== *end-multi-column",
-                        "=== *multi-column-end"]
+const END_REGEX_STRS = ["--- ?end-multi-column"]
 const END_REGEX_ARR: RegExp[] = [];
 for(let i = 0; i < END_REGEX_STRS.length; i++) {
     END_REGEX_ARR.push(new RegExp(END_REGEX_STRS[i]));
@@ -106,7 +101,6 @@ export function findEndTagClosestToEnd(text: string): TagPositioningData {
 
     let lastValidData = getEndTagData(workingText);
     while(lastValidData.found) {
-
         workingText = workingText.slice(lastValidData.endPosition);
         let newData = getEndTagData(workingText);
         if(newData.found === false) {
@@ -128,7 +122,6 @@ export function containsEndTag(text: string): boolean {
 }
 
 function getEndTagData(text: string) {
-
     let found = false;
     let startPosition = -1;
     let endPosition = -1
@@ -148,16 +141,7 @@ function getEndTagData(text: string) {
     return { found, startPosition, endPosition, matchLength };
 }
 
-const COL_REGEX_STRS: [string,string][] = [["^===\\s*?column-end\\s*?===\\s*?$"   ,""], // [Regex, Regex Flags]
-                                           ["^===\\s*?end-column\\s*?===\\s*?$"   ,""],
-                                           ["^===\\s*?column-break\\s*?===\\s*?$" ,""],
-                                           ["^===\\s*?break-column\\s*?===\\s*?$" ,""],
-                                           ["^---\\s*?column-end\\s*?---\\s*?$"   ,""],
-                                           ["^---\\s*?end-column\\s*?---\\s*?$"   ,""],
-                                           ["^---\\s*?column-break\\s*?---\\s*?$" ,""],
-                                           ["^---\\s*?break-column\\s*?---\\s*?$" ,""],
-                                           ["^ *?(?:\\?)\\columnbreak *?$"        ,""],
-                                           ["^:{3,} *column-?break *(?:(?:$\\n^)?| *):{3,} *$" ,"m"]];
+const COL_REGEX_STRS: [string,string][] = [["^--- ?break-column ?---$" ,""]];
 const COL_REGEX_ARR: RegExp[] = [];
 for(let i = 0; i < COL_REGEX_STRS.length; i++) {
     COL_REGEX_ARR.push(new RegExp(COL_REGEX_STRS[i][0], COL_REGEX_STRS[i][1]));
@@ -177,16 +161,7 @@ export function containsColEndTag(text: string): boolean {
 }
 
 const INNER_COL_END_REGEX_ARR: RegExp[] = [
-    /^-{3}\s*?column-end\s*?-{3}\s*?$\n?/m,
-    /^-{3}\s*?end-column\s*?-{3}\s*?$\n?/m,
-    /^-{3}\s*?column-break\s*?-{3}\s*?$\n?/m,
-    /^-{3}\s*?break-column\s*?-{3}\s*?$\n?/m,
-    /^={3}\s*?column-end\s*?={3}\s*?$\n?/m,
-    /^={3}\s*?end-column\s*?={3}\s*?$\n?/m,
-    /^={3}\s*?column-break\s*?={3}\s*?$\n?/m,
-    /^={3}\s*?break-column\s*?={3}\s*?$\n?/m,
-    /^ *?(?:\\?)\\columnbreak *?$\n?/m,
-    /^:{3,} *column-?break *(?:(?:$\n^)?| *):{3,} *$/m
+    /^-{3} ?break-column ?-{3}$/
 ]
 export function checkForParagraphInnerColEndTag(text: string): RegExpExecArray | null {
 
@@ -200,10 +175,7 @@ export function checkForParagraphInnerColEndTag(text: string): RegExpExecArray |
     return null;
 }
 
-const COL_ELEMENT_INNER_TEXT_REGEX_STRS: string[] = ["= *column-end *=",
-                                                    "= *end-column *=",
-                                                    "= *column-break *=",
-                                                    "= *break-column *="]
+const COL_ELEMENT_INNER_TEXT_REGEX_STRS: string[] = ["= ?break-column ?="]
 const COL_ELEMENT_INNER_TEXT_REGEX_ARR: RegExp[] = [];
 for(let i = 0; i < COL_ELEMENT_INNER_TEXT_REGEX_STRS.length; i++) {
     COL_ELEMENT_INNER_TEXT_REGEX_ARR.push(new RegExp(COL_ELEMENT_INNER_TEXT_REGEX_STRS[i]));
@@ -222,9 +194,7 @@ export function elInnerTextContainsColEndTag(text: string): boolean {
     return found;
 }
 
-const COL_SETTINGS_REGEX_STRS = ["```settings",
-                                 "```column-settings",
-                                 "```multi-column-settings"];
+const COL_SETTINGS_REGEX_STRS = ["```settings"];
 const COL_SETTINGS_REGEX_ARR: RegExp[] = [];
 for(let i = 0; i < COL_SETTINGS_REGEX_STRS.length; i++) {
     COL_SETTINGS_REGEX_ARR.push(new RegExp(COL_SETTINGS_REGEX_STRS[i]));

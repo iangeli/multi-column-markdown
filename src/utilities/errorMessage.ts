@@ -1,7 +1,7 @@
 import { DOMObjectTag, ElementColumnBreakType } from "src/dom_manager/domObject"
 import { RegionErrorManager } from "src/dom_manager/regionErrorManager"
 
-export function createColBreakWarning(type: ElementColumnBreakType, errorManager: RegionErrorManager) {
+export function createColBreakWarning(detail: string, type: ElementColumnBreakType, errorManager: RegionErrorManager) {
 
     let typeErrorStr = ""
     if(type === ElementColumnBreakType.preBreak) {
@@ -14,7 +14,7 @@ export function createColBreakWarning(type: ElementColumnBreakType, errorManager
         typeErrorStr = "in the middle of two elements"
     }
 
-    errorManager.addWarningMessage(`Detected a column break tag ${typeErrorStr}. Please make sure to surround column breaks with empty lines on both sides, or render issues may occur.`)
+    errorManager.addWarningMessage(`Detected a column break tag ${typeErrorStr}. ${detail}. Please make sure to surround column breaks with empty lines on both sides, or render issues may occur.`)
 }
 
 export interface ColBreakTypeInfo {
@@ -31,24 +31,27 @@ export function parseColBreakErrorType(elementInfo: ColBreakTypeInfo, errorManag
     }
 
     let errorType: ElementColumnBreakType = elementInfo.colBreakType;
+    let lineAbove = elementInfo.lineAbove.trim();
+    let lineBelow = elementInfo.lineBelow.trim();
+    let detail = ""
     if(elementInfo.objectTag === DOMObjectTag.columnBreak) {
 
-        if(elementInfo.lineAbove === "" &&
-           elementInfo.lineBelow === "") {
+        if(lineAbove === "" && lineBelow === "") {
             return;
         }
 
-        let lineAbove = elementInfo.lineAbove
-        let lineBelow = elementInfo.lineBelow
         if(lineAbove !== "" && lineBelow === "") {
             errorType = ElementColumnBreakType.postBreak
+            detail = `above: '${lineAbove}'`
         }
         if(lineAbove === "" && lineBelow !== "") {
             errorType = ElementColumnBreakType.preBreak
+            detail = `below: '${lineBelow}'`
         }
         if(lineAbove !== "" && lineBelow !== "") {
             errorType = ElementColumnBreakType.midBreak
+            detail = `above: '${lineAbove}', below: '${lineBelow}'`
         }
     }
-    createColBreakWarning(errorType, errorManager)
+    createColBreakWarning(detail, errorType, errorManager)
 }

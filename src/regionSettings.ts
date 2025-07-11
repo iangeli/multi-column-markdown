@@ -152,7 +152,7 @@ export function getDefaultMultiColumnSettings(): MultiColumnSettings {
     return {
         columnID: "",
         numberOfColumns: 2,
-        drawBorder: [true],
+        drawBorder: [false],
         drawShadow: true,
         autoLayout: false,
         columnSize: "standard",

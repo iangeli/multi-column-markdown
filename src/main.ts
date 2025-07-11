@@ -95,14 +95,34 @@ export default class MultiColumnMarkdown extends Plugin {
 
 ${editor.getDoc().getSelection()}`
                     );
-                    
-                    cursorStartPosition.line = cursorStartPosition.line + 7
+
+                    cursorStartPosition.line = cursorStartPosition.line + 3;
                     cursorStartPosition.ch = 0;
 
                     editor.setCursor(cursorStartPosition);
                 } catch (e) {
                     new Notice(
                         "Encountered an error inserting a multi-column region. Please try again later."
+                    );
+                }
+            }
+        });
+
+        this.addCommand({            
+            id: `insert-multi-column-settings`,
+            name: `Insert Multi-Column Settings`,
+            editorCallback: (editor, view) => {
+
+                try {
+                    editor.getDoc().replaceSelection(
+`\`\`\`settings
+Number of columns: 2
+Column Size: [50%, 50%]
+Alignment: [Left, Left]
+\`\`\``);
+                } catch (e) {
+                    new Notice(
+                        "Encountered an error inserting a multi-column settings. Please try again later."
                     );
                 }
             }

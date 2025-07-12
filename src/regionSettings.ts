@@ -36,6 +36,7 @@ export enum TableAlignOption {
 }
 
 const ALL_LAYOUTS = [
+    "auto",
     "standard",
     "left", 
     "first", 

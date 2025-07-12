@@ -46,6 +46,8 @@ export enum MultiColumnLayoutCSS {
 
     // ------------------------------------------------------ //
 
+    AutoColumns = "mcm-auto-columns",
+
     TwoEqualColumns = "mcm-two-equal-columns",
 
     TwoColumnSmall = "mcm-two-column-small",

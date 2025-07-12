@@ -37,6 +37,10 @@
 
 /* ----------------------------------- */
 
+.mcm-auto-columns {
+    width: auto;
+}
+
 .mcm-two-equal-columns {
     width: 49.75%;
 }
